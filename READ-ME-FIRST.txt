@@ -35,6 +35,10 @@ You renamed the save folder and the file inside it, and the game
 still shows the old name. This tool changes the name properly,
 inside the save, so the game still loads it.
 
+Made by Claude (Anthropic's AI), directed by me. All the code
+and all the text were written by Claude, following what I
+wanted. I don't know how to program: I only know how to direct.
+
 Already edited the file by hand and now the game refuses to load
 the profile? Put your original save back first: this tool refuses,
 on purpose, any save whose checksum is already broken.

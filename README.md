@@ -21,10 +21,15 @@ Renaming the save folder and the file inside it does **not** change the name the
 shows. The player name is stored inside the save. And every attempt to hex-edit it
 tends to end the same way: the game refuses to load the profile.
 
-There is a reason for that, and it is not documented anywhere obvious.
+There is a simple reason for that, explained below.
 
 > Just want to fix your save? Read **`READ-ME-FIRST.txt`** — same thing in plain text,
 > opens in Notepad. This README has the format details.
+
+> [!NOTE]
+> **Made by Claude, directed by me.** All the code and all the text in this project were
+> written by Claude (Anthropic's AI), following my direction and what I wanted. I don't know
+> how to program — I only know how to direct.
 
 ## The reason
 
