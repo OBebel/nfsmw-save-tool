@@ -1,0 +1,216 @@
+================================================================
+  NFSMW SAVE TOOL
+  Rename a Need for Speed: Most Wanted (2005) save profile
+  without corrupting it
+================================================================
+
+****************************************************************
+*                                                              *
+*   BEFORE YOU USE IT: BACK UP YOUR SAVES                      *
+*                                                              *
+*   Close the game and copy the whole "NFS Most Wanted"        *
+*   folder (in your Documents) somewhere else: a USB stick,    *
+*   the cloud.                                                 *
+*                                                              *
+*   The tool ALSO backs up by itself, before EVERY change.     *
+*   A full copy of the profile folder goes to                  *
+*                                                              *
+*     Documents\NFS Most Wanted - backups\                     *
+*         <Profile>_<date>_<time>                              *
+*                                                              *
+*   next to the saves folder (never inside it, so the game     *
+*   does not see it). Old copies are never overwritten. If     *
+*   the copy fails, nothing is changed.                        *
+*                                                              *
+*   TO RESTORE (game closed): move the profile's current       *
+*   folder out of "NFS Most Wanted", copy the backup folder    *
+*   in, and rename it back to just <Profile> (drop the date    *
+*   and time at the end). Your own copy: put it back the       *
+*   same way, with the game closed.                            *
+*                                                              *
+****************************************************************
+
+
+You renamed the save folder and the file inside it, and the game
+still shows the old name. This tool changes the name properly,
+inside the save, so the game still loads it.
+
+Already edited the file by hand and now the game refuses to load
+the profile? Put your original save back first: this tool refuses,
+on purpose, any save whose checksum is already broken.
+
+
+----------------------------------------------------------------
+  WHY IT BREAKS
+----------------------------------------------------------------
+
+The player name is stored INSIDE the save file, not in the folder
+name. So renaming the folder changes nothing the game can see.
+
+And the save ends with an MD5 checksum of its own body:
+
+    MD5( bytes from 0x34 to filesize-16 )  ==  the last 16 bytes
+
+Change a single byte and that hash stops matching, so the game
+rejects the file. Recompute it and the very same edit is accepted.
+
+That is the whole trick. Nothing else is needed.
+
+The start of the file also holds three CRC32 checksums (at 0x10,
+0x14 and 0x18). The game does not seem to check them (it loaded
+a renamed save where one of them was stale), but the tool
+rewrites all three after every change anyway, so the whole file
+stays consistent.
+
+
+----------------------------------------------------------------
+  HOW TO USE - THE EASY WAY
+----------------------------------------------------------------
+
+Downloaded it from GitHub? Get the whole folder first:
+
+  1. Green "Code" button > Download ZIP
+  2. Right-click the ZIP > Extract All
+  3. Open the extracted folder (inside it there is another one
+     with the same name: open that one too)
+
+Do not run it from inside the ZIP, and do not copy only
+ABRIR.bat somewhere else (for a desktop shortcut, see A SHORTCUT
+WITH THE LOGO at the end).
+
+  Double-click  ABRIR.bat
+
+If Windows shows "Windows protected your PC", click "More info"
+and then "Run anyway". If it shows "Security Warning", click
+"Run". That happens because the file came from the internet; the
+program is plain text and you can read all of it first.
+
+If it still does not open: on school or work PCs, or with Smart
+App Control turned on, Windows blocks scripts downloaded from the
+internet. The black window says why; on that PC only whoever
+manages it can allow it.
+
+A window opens listing every profile, the name stored inside each
+one, and whether its checksum is still valid. Pick one, type the
+new name, click Renomear.
+
+Close the game before renaming (if it is open, the window says so
+and changes nothing).
+
+Before the first change, each time it opens, the window asks
+once: it shows where the backup copy goes, and has the buttons
+"Abrir a pasta de saves" (opens the saves folder, so you can copy
+it yourself), "Continuar" and "Cancelar" (changes nothing). After
+each change, the log at the bottom says where its copy is.
+
+Needs nothing installed. No Python. Windows only.
+
+
+----------------------------------------------------------------
+  HOW TO USE - THE TERMINAL WAY
+----------------------------------------------------------------
+
+Same thing, if you prefer typing. Needs Python installed:
+
+  See every profile, the name stored inside, and whether the
+  checksum is valid:
+
+      python nfsmw_save.py list
+
+  Inspect one file:
+
+      python nfsmw_save.py check "C:\Users\you\Documents\NFS Most Wanted\Racer\Racer"
+
+  Change the in-game name (a full backup copy is made first):
+
+      python nfsmw_save.py rename Racer NewName
+
+  ...and also rename the folder and the file to match:
+
+      python nfsmw_save.py rename Racer NewName --also-rename-folder
+
+  The terminal tool asks nothing: before every change it makes
+  the same full copy, prints where it went, and changes nothing
+  if the copy fails. Close the game first here too: if it is
+  running, the tool stops and changes nothing.
+
+
+Names up to 35 characters. ASCII only.
+
+Saves live in your Documents folder:
+
+    <Documents>\NFS Most Wanted\<Profile>\<Profile>
+
+If OneDrive backs up your Documents, or you moved it, that is not
+C:\Users\<you>\Documents. Both the window and the terminal tool
+ask Windows where it really is.
+
+The folder and the file inside must share the same name. A folder
+whose inner file has a different name is simply ignored by the game.
+
+
+----------------------------------------------------------------
+  WHAT IT PROTECTS YOU FROM
+----------------------------------------------------------------
+
+  - refuses to touch a save whose checksum is ALREADY broken
+  - makes a full copy of the profile folder before EVERY change
+    (and a .bak next to the save before the first one); if the
+    copy fails, nothing is changed
+  - verifies the result by reading the file back from disk,
+    instead of trusting what it just wrote
+
+
+----------------------------------------------------------------
+  BEFORE YOU TRUST IT
+----------------------------------------------------------------
+
+This was verified on the PC release, with save files of exactly
+63,596 bytes. Other builds may differ.
+
+In the window, look at the Integro column: "sim" means the
+checksum is valid (in the terminal: run "check"). Confirm it
+BEFORE trusting the rename. If it shows "outro formato" (another
+layout; the terminal says "unknown layout"), the name is not
+where this tool expects it, and the tool refuses to change that
+save.
+
+The tool edits only the name field and the checksums (the MD5 at
+the end and the three CRC32s at the start). It does not touch
+progress, cars, or anything else.
+
+Not affiliated with EA or the game in any way.
+
+
+----------------------------------------------------------------
+
+README.md has the full save format, the offsets, and how the
+format was worked out - read that one if you want the details.
+
+----------------------------------------------------------------
+  APPEARANCE
+----------------------------------------------------------------
+
+The window follows your Windows theme (light or dark). The
+"Aparencia" button (top right) lets you change the theme (6 of
+them), the accent color, the size, the font and the corners. It
+is saved to aparencia.json, next to the program.
+
+----------------------------------------------------------------
+  A SHORTCUT WITH THE LOGO (optional)
+----------------------------------------------------------------
+
+  1. Right-click ABRIR.bat > Create shortcut
+     (Windows 11: Show more options > Create shortcut)
+  2. Move the shortcut to the desktop
+  3. Right-click it > Properties > Change Icon...
+     > Browse > pick  logo.ico  (in this folder)
+
+
+----------------------------------------------------------------
+  LICENCE
+----------------------------------------------------------------
+
+MIT - see the LICENSE file. In plain words: you can use, copy,
+modify and share it, even in other projects, as long as you keep
+the copyright notice. No warranty.

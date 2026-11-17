@@ -1,0 +1,9 @@
+# saves de verdade nunca entram no repositorio
+*.bak
+*.sav
+NFS Most Wanted/
+saves/
+__pycache__/
+*.pyc
+# a aparencia escolhida por quem usa
+aparencia.json
